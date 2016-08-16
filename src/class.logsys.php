@@ -714,13 +714,18 @@ class LS {
   
   /**
    * A function that handles the logged in user to change her/his password
+   * $userID - Give a userID and the password will be changed for that user.
    */
-  public static function changePassword($newpass){
+  public static function changePassword($newpass, $userID=null){
     self::construct();
     if(self::$loggedIn){
       $hashedPass = password_hash($newpass . self::$config['keys']['salt'], PASSWORD_DEFAULT);
       $sql = self::$dbh->prepare("UPDATE `". self::$config['db']['table'] ."` SET `password` = ? WHERE `id` = ?");
-      $sql->execute(array($hashedPass, self::$user));
+   	  if($userID == null){
+      	$sql->execute(array($hashedPass, self::$user));
+    	}else{
+    		$sql->execute(array($hashedPass, $userID));
+    	}
       return true;
     }else{
       echo "<h3>Error : Not Logged In</h3>";
